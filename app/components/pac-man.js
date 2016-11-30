@@ -3,13 +3,23 @@ import KeyboardShortcuts from 'ember-keyboard-shortcuts/mixins/component';
 
 export default Ember.Component.extend(KeyboardShortcuts, {
 
-  didInsertElement: function() {
-    this.drawCircle();
-  },
-
   x: 1,
   y: 2,
   squareSize: 40,
+  screenWidth: 20,
+  screenHeight: 15,
+
+  walls: [
+    {x: 1, y: 1},
+    {x: 8, y: 5}
+  ],
+
+  screenPixelWidth: Ember.computed(function () {
+    return this.get('screenWidth') * this.get('squareSize');
+  }),
+  screenPixelHeight: Ember.computed(function () {
+    return this.get('screenHeight') * this.get('squareSize');
+  }),
 
   ctx: Ember.computed(function(){
     let canvas = document.getElementById('myCanvas');
@@ -22,6 +32,11 @@ export default Ember.Component.extend(KeyboardShortcuts, {
     down: function() { this.movePacMan('y', 1);},
     left: function() { this.movePacMan('x', -1);},
     right: function() { this.movePacMan('x', 1);},
+  },
+
+  didInsertElement: function() {
+    this.drawWalls();
+    this.drawCircle();
   },
 
   drawCircle: function() {
@@ -40,15 +55,19 @@ export default Ember.Component.extend(KeyboardShortcuts, {
     ctx.fill();
   },
 
-  screenWidth: 20,
-  screenHeight: 15,
+  drawWalls: function() {
+    let squareSize = this.get('squareSize');
+    let ctx = this.get('ctx');
+    ctx.fillStyle = '#000';
 
-  screenPixelWidth: Ember.computed(function () {
-    return this.get('screenWidth') * this.get('squareSize');
-  }),
-  screenPixelHeight: Ember.computed(function () {
-    return this.get('screenHeight') * this.get('squareSize');
-  }),
+    let walls = this.get('walls');
+    walls.forEach(function(wall){
+      ctx.fillRect(wall.x * squareSize,
+                   wall.y * squareSize,
+                   squareSize,
+                   squareSize)
+    })
+  },
 
   clearScreen: function() {
     let ctx = this.get('ctx');
@@ -66,6 +85,7 @@ export default Ember.Component.extend(KeyboardShortcuts, {
     }
 
     this.clearScreen();
+    this.drawWalls();
     this.drawCircle();
   },
 
