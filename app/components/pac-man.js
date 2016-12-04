@@ -80,7 +80,7 @@ export default Ember.Component.extend(KeyboardShortcuts, {
   movePacMan: function(direction, amount) {
     this.incrementProperty(direction, amount);
 
-    if(this.collidedWithBorder()) {
+    if(this.collidedWithBorder() || this.collidedWithWall()) {
       this.decrementProperty(direction, amount)
     }
 
@@ -100,5 +100,15 @@ export default Ember.Component.extend(KeyboardShortcuts, {
                          x >= screenWidth ||
                          y >= screenHeight
     return pacOutOfBounds
+  },
+
+  collidedWithWall: function() {
+    let x = this.get('x');
+    let y = this.get('y');
+    let walls = this.get('walls');
+
+    return walls.any(function(wall) {
+      return x == wall.x && y == wall.y
+    })
   }
 });
