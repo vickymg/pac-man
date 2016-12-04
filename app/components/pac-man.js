@@ -6,14 +6,24 @@ export default Ember.Component.extend(KeyboardShortcuts, {
   x: 1,
   y: 2,
   squareSize: 40,
-  screenWidth: 20,
-  screenHeight: 15,
 
-  walls: [
-    {x: 1, y: 1},
-    {x: 8, y: 5}
+  // 0 is blank space, 1 is a wall
+
+  grid: [
+    [0, 0, 0, 0, 0, 0, 0, 1],
+    [0, 1, 0, 1, 0, 0, 0, 1],
+    [0, 0, 1, 0, 0, 0, 0, 1],
+    [0, 0, 0, 0, 0, 0, 0, 1],
+    [0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 1],
   ],
 
+  screenWidth: Ember.computed(function() {
+    return this.get('grid.firstObject.length')
+  }),
+  screenHeight: Ember.computed(function () {
+    return this.get('grid.length')
+  }),
   screenPixelWidth: Ember.computed(function () {
     return this.get('screenWidth') * this.get('squareSize');
   }),
@@ -60,12 +70,15 @@ export default Ember.Component.extend(KeyboardShortcuts, {
     let ctx = this.get('ctx');
     ctx.fillStyle = '#000';
 
-    let walls = this.get('walls');
-    walls.forEach(function(wall){
-      ctx.fillRect(wall.x * squareSize,
-                   wall.y * squareSize,
-                   squareSize,
-                   squareSize)
+    let grid = this.get('grid');
+    grid.forEach(function(row, rowIndex) {
+      row.forEach(function(cell, columnIndex) {
+        if(cell == 1) {
+          ctx.fillRect(columnIndex * squareSize,
+                       rowIndex * squareSize,
+                       squareSize, squareSize)
+        }
+      })
     })
   },
 
@@ -105,10 +118,8 @@ export default Ember.Component.extend(KeyboardShortcuts, {
   collidedWithWall: function() {
     let x = this.get('x');
     let y = this.get('y');
-    let walls = this.get('walls');
+    let grid = this.get('grid');
 
-    return walls.any(function(wall) {
-      return x == wall.x && y == wall.y
-    })
+    return grid[y][x] == 1
   }
 });
