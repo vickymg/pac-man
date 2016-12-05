@@ -118,9 +118,21 @@ export default Ember.Component.extend(KeyboardShortcuts, {
       this.decrementProperty(direction, amount)
     }
 
+    this.processAnyPellets();
+
     this.clearScreen();
     this.drawGrid();
-    this.drawCircle();
+    this.drawPac();
+  },
+
+  processAnyPellets: function() {
+    let x = this.get('x');
+    let y = this.get('y');
+    let grid = this.get('grid');
+
+    if(grid[y][x] == 2) {
+      grid[y][x] = 0;
+    }
   },
 
   collidedWithBorder: function() {
