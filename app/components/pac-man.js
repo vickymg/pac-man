@@ -3,6 +3,8 @@ import KeyboardShortcuts from 'ember-keyboard-shortcuts/mixins/component';
 
 export default Ember.Component.extend(KeyboardShortcuts, {
 
+  score: 0,
+
   x: 1,
   y: 2,
   squareSize: 40,
@@ -132,6 +134,7 @@ export default Ember.Component.extend(KeyboardShortcuts, {
 
     if(grid[y][x] == 2) {
       grid[y][x] = 0;
+      this.incrementProperty('score');
     }
   },
 
